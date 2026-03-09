@@ -5,22 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Health Cockpit V9</title>
+  <title>Health Cockpit V10</title>
   <style>
     :root {
-      --bg: #060b14;
+      --bg: #050914;
       --bg2: #0b1322;
-      --panel: rgba(15, 22, 38, 0.72);
-      --panel-strong: rgba(17, 27, 45, 0.92);
+      --panel: rgba(16, 24, 39, 0.72);
+      --panel-strong: rgba(17, 27, 45, 0.94);
       --line: rgba(255,255,255,0.08);
-      --text: #edf4ff;
-      --muted: #92a7c9;
-      --good: #31e3a9;
-      --warn: #ffcb67;
-      --bad: #ff7e87;
-      --blue: #73b9ff;
-      --violet: #b69bff;
-      --cyan: #7ce8f8;
+      --text: #eef5ff;
+      --muted: #93a8ca;
+      --good: #2fe2a8;
+      --warn: #ffcb68;
+      --bad: #ff7c87;
+      --blue: #74b8ff;
+      --violet: #b69cff;
       --shadow: 0 28px 64px rgba(0,0,0,0.34);
       --radius: 26px;
     }
@@ -97,7 +96,11 @@
 
     .muted { color: var(--muted); font-size: 13px; line-height: 1.5; }
 
-    .grid2, .grid3 { display: grid; gap: 10px; }
+    .grid2, .grid3 {
+      display: grid;
+      gap: 10px;
+    }
+
     .grid2 { grid-template-columns: repeat(2, 1fr); }
     .grid3 { grid-template-columns: repeat(3, 1fr); }
 
@@ -139,11 +142,11 @@
       font-weight: 700;
     }
 
-    .good { color: #8ff3cb; background: rgba(49,227,169,0.14); }
-    .warn { color: #ffdf98; background: rgba(255,203,103,0.14); }
-    .bad { color: #ffb7bb; background: rgba(255,126,135,0.14); }
-    .blue { color: #b7dbff; background: rgba(115,185,255,0.14); }
-    .violet { color: #decfff; background: rgba(182,155,255,0.14); }
+    .good { color: #8ff3cb; background: rgba(47,226,168,0.14); }
+    .warn { color: #ffe099; background: rgba(255,203,104,0.14); }
+    .bad { color: #ffb6bb; background: rgba(255,124,135,0.14); }
+    .blue { color: #b7dbff; background: rgba(116,184,255,0.14); }
+    .violet { color: #dfd0ff; background: rgba(182,156,255,0.14); }
 
     .today-layout { display: grid; gap: 12px; }
 
@@ -195,6 +198,7 @@
 
     .name { font-size: 15px; font-weight: 700; }
     .value { font-size: 14px; font-weight: 700; }
+
     .meta {
       display: flex;
       justify-content: space-between;
@@ -212,16 +216,13 @@
     }
 
     .fill { height: 100%; border-radius: 999px; }
-    .fill-good { background: linear-gradient(90deg, #31e3a9, #75f1cb); }
+    .fill-good { background: linear-gradient(90deg, #2fe2a8, #75f1cb); }
     .fill-warn { background: linear-gradient(90deg, #ffbe57, #ffdd9b); }
     .fill-bad { background: linear-gradient(90deg, #ff6c77, #ffafb4); }
     .fill-blue { background: linear-gradient(90deg, #6eb5ff, #9ed3ff); }
     .fill-violet { background: linear-gradient(90deg, #ad8dff, #ceb8ff); }
-    .fill-cyan { background: linear-gradient(90deg, #72e5f8, #aaf2ff); }
 
-    .module-grid { display: grid; gap: 10px; }
-
-    .stack { display: grid; gap: 10px; }
+    .module-grid, .stack { display: grid; gap: 10px; }
 
     .trend h3 { margin: 0 0 10px; font-size: 15px; }
     .caption { color: var(--muted); font-size: 12px; line-height: 1.45; margin-top: 8px; }
@@ -246,9 +247,9 @@
     }
 
     .l1::before { background: #ff8b8b; }
-    .l2::before { background: #31e3a9; }
+    .l2::before { background: #2fe2a8; }
     .l3::before { background: #6eb5ff; }
-    .l4::before { background: #b69bff; }
+    .l4::before { background: #b69cff; }
 
     table {
       width: 100%;
@@ -276,12 +277,13 @@
     .axis { stroke: rgba(255,255,255,0.12); stroke-width: 1; }
     .tick { fill: #90a3bf; font-size: 10px; }
     .line-red { fill: none; stroke: #ff8b8b; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-    .line-green { fill: none; stroke: #31e3a9; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .line-green { fill: none; stroke: #2fe2a8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
     .line-blue { fill: none; stroke: #6eb5ff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-    .line-violet { fill: none; stroke: #b69bff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .line-violet { fill: none; stroke: #b69cff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 
     label { display: block; font-size: 12px; color: #c8d4e4; margin-bottom: 6px; }
     .input-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
     input {
       width: 100%;
       background: rgba(255,255,255,0.06);
@@ -292,6 +294,7 @@
       font-size: 14px;
       outline: none;
     }
+
     button {
       appearance: none;
       border: 0;
@@ -303,6 +306,7 @@
       width: 100%;
       margin-top: 10px;
     }
+
     .btn-primary { background: linear-gradient(90deg, #6db8ff, #7df2c8); color: #031018; }
     .btn-secondary { background: rgba(255,255,255,0.08); color: white; }
 
@@ -350,8 +354,8 @@
   <div class="app">
     <div class="hero" id="today">
       <div class="eyebrow">Christopher • cockpit santé premium</div>
-      <h1>Health Cockpit V9</h1>
-      <div class="sub">Version plus moderne, plus modulaire et plus proche d'une vraie app santé premium, avec sections Today, Trends, Labs, Devices, Simulation et Insights.</div>
+      <h1>Health Cockpit V10</h1>
+      <div class="sub">Version Whoop-style avec score central, modules recovery/athéro, tendances, bilans, devices, simulation et IQOS dynamique.</div>
     </div>
 
     <section class="section">
@@ -360,15 +364,15 @@
         <div class="gauge-wrap">
           <div class="gauge-box">
             <svg viewBox="0 0 320 210" aria-label="Jauge score santé">
-              <path d="M40 170 A120 120 0 0 1 100 66" fill="none" stroke="rgba(49,227,169,0.22)" stroke-width="22" stroke-linecap="round"></path>
-              <path d="M100 66 A120 120 0 0 1 220 50" fill="none" stroke="rgba(255,203,103,0.24)" stroke-width="22" stroke-linecap="round"></path>
-              <path d="M220 50 A120 120 0 0 1 280 170" fill="none" stroke="rgba(255,126,135,0.24)" stroke-width="22" stroke-linecap="round"></path>
+              <path d="M40 170 A120 120 0 0 1 100 66" fill="none" stroke="rgba(47,226,168,0.22)" stroke-width="22" stroke-linecap="round"></path>
+              <path d="M100 66 A120 120 0 0 1 220 50" fill="none" stroke="rgba(255,203,104,0.24)" stroke-width="22" stroke-linecap="round"></path>
+              <path d="M220 50 A120 120 0 0 1 280 170" fill="none" stroke="rgba(255,124,135,0.24)" stroke-width="22" stroke-linecap="round"></path>
               <path id="gaugeProgress" d="M40 170 A120 120 0 0 1 280 170" fill="none" stroke="url(#gradGauge)" stroke-width="12" stroke-linecap="round" pathLength="100" stroke-dasharray="74 100"></path>
               <defs>
                 <linearGradient id="gradGauge" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#31e3a9"></stop>
-                  <stop offset="55%" stop-color="#ffcb67"></stop>
-                  <stop offset="100%" stop-color="#ff7e87"></stop>
+                  <stop offset="0%" stop-color="#2fe2a8"></stop>
+                  <stop offset="55%" stop-color="#ffcb68"></stop>
+                  <stop offset="100%" stop-color="#ff7c87"></stop>
                 </linearGradient>
               </defs>
             </svg>
@@ -404,7 +408,7 @@
       <h2>Insights</h2>
       <div class="module-grid">
         <div class="module">
-          <div class="module-top"><div class="name">Score athéro / ApoB</div><div class="value" id="lipidScoreText">58/100</div></div>
+          <div class="module-top"><div class="name">Athero Risk</div><div class="value" id="lipidScoreText">58/100</div></div>
           <div class="meta"><span>ApoB, LDL, HDL, TG, Lp(a), CRP</span><span>priorité</span></div>
           <div class="bar"><div class="fill fill-bad" id="lipidBar" style="width:58%"></div></div>
         </div>
@@ -414,7 +418,7 @@
           <div class="bar"><div class="fill fill-blue" id="cardioBar" style="width:73%"></div></div>
         </div>
         <div class="module">
-          <div class="module-top"><div class="name">Métabolisme</div><div class="value" id="metabolicScoreText">88/100</div></div>
+          <div class="module-top"><div class="name">Metabolic</div><div class="value" id="metabolicScoreText">88/100</div></div>
           <div class="meta"><span>glycémie, insuline, HOMA, CRP</span><span>très bon</span></div>
           <div class="bar"><div class="fill fill-good" id="metabolicBar" style="width:88%"></div></div>
         </div>
@@ -424,7 +428,7 @@
           <div class="bar"><div class="fill fill-violet" id="fitnessBar" style="width:85%"></div></div>
         </div>
         <div class="module">
-          <div class="module-top"><div class="name">IQOS impact</div><div class="value" id="tobaccoScoreText">40/100</div></div>
+          <div class="module-top"><div class="name">IQOS Impact</div><div class="value" id="tobaccoScoreText">40/100</div></div>
           <div class="meta"><span>objectif : 0</span><span>évolutif</span></div>
           <div class="bar"><div class="fill fill-warn" id="tobaccoBar" style="width:40%"></div></div>
         </div>
@@ -474,7 +478,7 @@
           <span class="l3">Triglycérides</span>
           <span class="l4">Score</span>
         </div>
-        <div class="caption">Un rendu plus proche d'une app santé moderne, avec lecture rapide des tendances.</div>
+        <div class="caption">LDL et ApoB restent les vrais freins. Lp(a) basse et CRP basse nuancent le risque.</div>
       </div>
     </section>
 
@@ -550,7 +554,7 @@
         <button class="btn-primary" id="saveBtn">Enregistrer cette entrée</button>
         <button class="btn-secondary" id="simulateBtn">Simuler l'impact</button>
         <button class="btn-secondary" id="resetBtn">Réinitialiser</button>
-        <div class="tiny">Tu peux désormais faire varier IQOS librement : le score s'améliore ou baisse selon ta progression vers 0.</div>
+        <div class="tiny">Tu peux faire varier IQOS librement : le score s'améliore ou baisse selon ta progression vers 0.</div>
       </div>
     </section>
 
@@ -561,7 +565,7 @@
     </section>
 
     <div class="footer">
-      V9 : design plus moderne, plus visuel et plus modulaire, dans un style d'app santé actuelle. IQOS est maintenant pensé comme une variable de progression vers 0.
+      V10 : design plus moderne, plus visuel et plus modulaire, dans un style d'app santé actuelle. IQOS est pensé comme une variable de progression vers 0.
     </div>
   </div>
 
@@ -609,15 +613,49 @@
     }
 
     function computeScores(data) {
-      const athero = Math.round((scoreApoB(data.apob) * 0.40) + (scoreLDL(data.ldl) * 0.20) + (scoreHDL(data.hdl) * 0.15) + (scoreTG(data.tg) * 0.10) + (scoreLpa(data.lpa) * 0.10) + (scoreCrp(data.crp) * 0.05));
-      const cardio = Math.round((scoreHRV(data.hrv) * 0.35) + (scoreRHR(data.rhr) * 0.25) + (scoreSleep(data.sleep) * 0.20) + (scoreVo2(data.vo2) * 0.20));
+      const athero = Math.round(
+        (scoreApoB(data.apob) * 0.40) +
+        (scoreLDL(data.ldl) * 0.20) +
+        (scoreHDL(data.hdl) * 0.15) +
+        (scoreTG(data.tg) * 0.10) +
+        (scoreLpa(data.lpa) * 0.10) +
+        (scoreCrp(data.crp) * 0.05)
+      );
+
+      const cardio = Math.round(
+        (scoreHRV(data.hrv) * 0.35) +
+        (scoreRHR(data.rhr) * 0.25) +
+        (scoreSleep(data.sleep) * 0.20) +
+        (scoreVo2(data.vo2) * 0.20)
+      );
+
       const metabolic = Math.round((scoreCrp(data.crp) * 0.20) + 73);
       const fitness = Math.round((scoreVo2(data.vo2) * 0.55) + 36);
       const micronutrition = 72;
       const tobacco = scoreIqos(data.iqos);
-      const longevity = Math.round((athero * 0.28) + (cardio * 0.24) + (metabolic * 0.18) + (fitness * 0.12) + (micronutrition * 0.10) + (tobacco * 0.08));
-      const global = Math.round((athero * 0.30) + (cardio * 0.25) + (metabolic * 0.20) + (fitness * 0.15) + (micronutrition * 0.10));
-      const bioAge = Math.max(32, Math.min(48, 41 - ((global - 70) * 0.16) - ((longevity - 75) * 0.08) + ((100 - tobacco) * 0.015)));
+
+      const longevity = Math.round(
+        (athero * 0.28) +
+        (cardio * 0.24) +
+        (metabolic * 0.18) +
+        (fitness * 0.12) +
+        (micronutrition * 0.10) +
+        (tobacco * 0.08)
+      );
+
+      const global = Math.round(
+        (athero * 0.30) +
+        (cardio * 0.25) +
+        (metabolic * 0.20) +
+        (fitness * 0.15) +
+        (micronutrition * 0.10)
+      );
+
+      const bioAge = Math.max(
+        32,
+        Math.min(48, 41 - ((global - 70) * 0.16) - ((longevity - 75) * 0.08) + ((100 - tobacco) * 0.015))
+      );
+
       return { lipid: athero, cardio, metabolic, fitness, micronutrition, tobacco, longevity, global, bioAge };
     }
 
@@ -648,15 +686,40 @@
     }
 
     function loadState() {
-      try { const raw = localStorage.getItem('healthCockpitV9'); return raw ? JSON.parse(raw) : defaultState; }
-      catch (e) { return defaultState; }
+      try {
+        const raw = localStorage.getItem('healthCockpitV10');
+        return raw ? JSON.parse(raw) : defaultState;
+      } catch (e) {
+        return defaultState;
+      }
     }
-    function saveState(state) { localStorage.setItem('healthCockpitV9', JSON.stringify(state)); }
-    function formatNum(v) { return v == null ? '—' : String(v).replace('.', ','); }
-    function getCombinedHistory(state) { return [...baseHistory, ...(state.history || [])].map(item => ({ ...item, score: item.score ?? computeScores(item).global })); }
+
+    function saveState(state) {
+      localStorage.setItem('healthCockpitV10', JSON.stringify(state));
+    }
+
+    function formatNum(v) {
+      return v == null ? '—' : String(v).replace('.', ',');
+    }
+
+    function getCombinedHistory(state) {
+      return [...baseHistory, ...(state.history || [])].map(item => ({
+        ...item,
+        score: item.score ?? computeScores(item).global
+      }));
+    }
 
     function renderHistoryTable(history) {
-      document.getElementById('historyTable').innerHTML = history.map(item => `<tr><td><strong>${item.date}</strong></td><td>${item.total == null ? '—' : formatNum(item.total)}</td><td>${item.ldl == null ? '—' : formatNum(item.ldl)}</td><td>${item.hdl == null ? '—' : formatNum(item.hdl)}</td><td>${item.tg == null ? '—' : formatNum(item.tg)}</td><td>${item.score}</td></tr>`).join('');
+      document.getElementById('historyTable').innerHTML = history.map(item =>
+        `<tr>
+          <td><strong>${item.date}</strong></td>
+          <td>${item.total == null ? '—' : formatNum(item.total)}</td>
+          <td>${item.ldl == null ? '—' : formatNum(item.ldl)}</td>
+          <td>${item.hdl == null ? '—' : formatNum(item.hdl)}</td>
+          <td>${item.tg == null ? '—' : formatNum(item.tg)}</td>
+          <td>${item.score}</td>
+        </tr>`
+      ).join('');
     }
 
     function scoreToY(score) {
@@ -674,7 +737,11 @@
 
     function renderEncouragement(currentScores, previousScores, currentData, previousData) {
       const msg = encouragementText(currentScores, previousScores);
-      const comps = [['ldl','LDL',true],['hdl','HDL',false],['tg','Triglycérides',true],['apob','ApoB',true],['hrv','HRV',false],['rhr','FCR',true],['sleep','Sommeil',false],['iqos','IQOS',true]];
+      const comps = [
+        ['ldl','LDL',true], ['hdl','HDL',false], ['tg','Triglycérides',true],
+        ['apob','ApoB',true], ['hrv','HRV',false], ['rhr','FCR',true],
+        ['sleep','Sommeil',false], ['iqos','IQOS',true]
+      ];
       const bullets = [];
       comps.forEach(([field, label, lower]) => {
         const c = compareField(currentData, previousData || {}, field, lower);
@@ -682,8 +749,19 @@
         if (c.improved) bullets.push(`${label} en amélioration`);
         else if (c.worsened) bullets.push(`${label} moins bon`);
       });
-      document.getElementById('encouragementBox').innerHTML = `<div class="row-top"><div class="name">Encouragement du moment</div><div class="pill ${currentScores.global >= (previousScores?.global ?? currentScores.global) ? 'good' : 'warn'}">${currentScores.global >= (previousScores?.global ?? currentScores.global) ? 'encourageant' : 'à surveiller'}</div></div><p class="muted">${msg}</p><p class="tiny">${bullets.length ? bullets.join(' • ') : 'Pas assez de comparaison disponible pour détailler les variations.'}</p>`;
-      document.getElementById('aiAnalysisBox').textContent = `Analyse locale : score global ${currentScores.global}, longévité ${currentScores.longevity}, âge biologique ${currentScores.bioAge.toFixed(1).replace('.', ',')}. Le principal levier reste l'athéro-score ${currentScores.lipid}/100 et l'impact IQOS ${currentScores.tobacco}/100.`;
+
+      document.getElementById('encouragementBox').innerHTML =
+        `<div class="row-top">
+          <div class="name">Encouragement du moment</div>
+          <div class="pill ${currentScores.global >= (previousScores?.global ?? currentScores.global) ? 'good' : 'warn'}">
+            ${currentScores.global >= (previousScores?.global ?? currentScores.global) ? 'encourageant' : 'à surveiller'}
+          </div>
+        </div>
+        <p class="muted">${msg}</p>
+        <p class="tiny">${bullets.length ? bullets.join(' • ') : 'Pas assez de comparaison disponible pour détailler les variations.'}</p>`;
+
+      document.getElementById('aiAnalysisBox').textContent =
+        `Analyse locale : score global ${currentScores.global}, longévité ${currentScores.longevity}, âge biologique ${currentScores.bioAge.toFixed(1).replace('.', ',')}. Le principal levier reste l'athéro-score ${currentScores.lipid}/100 et l'impact IQOS ${currentScores.tobacco}/100.`;
     }
 
     function updateUI() {
@@ -701,7 +779,9 @@
       document.getElementById('scoreLabel').textContent = labelForScore(scores.global);
       document.getElementById('scoreDelta').textContent = (deltaCurrentBase >= 0 ? '+' : '') + deltaCurrentBase + ' vs 03/2026';
       document.getElementById('bioAgeValue').textContent = scores.bioAge.toFixed(1).replace('.', ',');
-      document.getElementById('bioAgeDelta').textContent = scores.bioAge < 41 ? `${(41 - scores.bioAge).toFixed(1).replace('.', ',')} an(s) de moins que l'âge réel` : 'proche de l âge réel';
+      document.getElementById('bioAgeDelta').textContent = scores.bioAge < 41
+        ? `${(41 - scores.bioAge).toFixed(1).replace('.', ',')} an(s) de moins que l'âge réel`
+        : 'proche de l âge réel';
       document.getElementById('longevityCard').textContent = scores.longevity;
       document.getElementById('atheroCard').textContent = scores.lipid;
       document.getElementById('scoreCurrentCard').textContent = scores.global;
@@ -713,6 +793,7 @@
       document.getElementById('metabolicScoreText').textContent = scores.metabolic + '/100';
       document.getElementById('fitnessScoreText').textContent = scores.fitness + '/100';
       document.getElementById('tobaccoScoreText').textContent = scores.tobacco + '/100';
+
       document.getElementById('lipidBar').style.width = scores.lipid + '%';
       document.getElementById('cardioBar').style.width = scores.cardio + '%';
       document.getElementById('metabolicBar').style.width = scores.metabolic + '%';
@@ -759,7 +840,8 @@
 
     document.getElementById('simulateBtn').addEventListener('click', () => {
       const result = computeScores(buildEntryFromInputs());
-      document.getElementById('aiAnalysisBox').textContent = `Simulation locale : score global ${result.global}, longévité ${result.longevity}, âge biologique ${result.bioAge.toFixed(1).replace('.', ',')}, athéro-score ${result.lipid}, tabac ${result.tobacco}.`;
+      document.getElementById('aiAnalysisBox').textContent =
+        `Simulation locale : score global ${result.global}, longévité ${result.longevity}, âge biologique ${result.bioAge.toFixed(1).replace('.', ',')}, athéro-score ${result.lipid}, tabac ${result.tobacco}.`;
     });
 
     document.getElementById('resetBtn').addEventListener('click', () => {
@@ -773,7 +855,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'health-cockpit-v9.json';
+      a.download = 'health-cockpit-v10.json';
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -804,7 +886,9 @@
 
     document.getElementById('scanLabBtn').addEventListener('click', () => {
       const file = document.getElementById('labPhotoInput').files[0];
-      document.getElementById('aiAnalysisBox').textContent = file ? `Photo labo sélectionnée : ${file.name}. Préparation d'import prête ; OCR/IA complet à brancher ensuite.` : 'Sélectionne une photo ou un PDF pour préparer l import.';
+      document.getElementById('aiAnalysisBox').textContent = file
+        ? `Photo labo sélectionnée : ${file.name}. Préparation d'import prête ; OCR/IA complet à brancher ensuite.`
+        : 'Sélectionne une photo ou un PDF pour préparer l import.';
     });
 
     updateUI();

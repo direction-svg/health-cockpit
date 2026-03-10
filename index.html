@@ -1,352 +1,1015 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Health Cockpit V10.2</title>
+  <title>Health Cockpit V11</title>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     :root {
-      --bg: #060b14;
-      --bg2: #0b1322;
-      --panel: rgba(16,24,39,.72);
-      --panel-strong: rgba(17,27,45,.94);
+      --bg: #03060c;
+      --bg2: #070b13;
+      --panel: #0b1220;
+      --panel2: #0f1727;
       --line: rgba(255,255,255,.08);
-      --text: #eef5ff;
-      --muted: #93a8ca;
-      --good: #2fe2a8;
-      --warn: #ffcb68;
-      --bad: #ff7c87;
-      --blue: #74b8ff;
-      --violet: #b69cff;
-      --shadow: 0 28px 64px rgba(0,0,0,.34);
-      --radius: 26px;
+      --line-strong: rgba(255,255,255,.14);
+      --text: #eef4ff;
+      --muted: #8ea2c3;
+      --green: #20e38d;
+      --green2: #6cffb5;
+      --blue: #3ea1ff;
+      --blue2: #7bc0ff;
+      --yellow: #ffc65b;
+      --red: #ff747d;
+      --radius: 24px;
+      --shadow: 0 18px 48px rgba(0,0,0,.45);
     }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(97,129,255,.18), transparent 24%),
-        radial-gradient(circle at top right, rgba(44,203,187,.12), transparent 22%),
-        linear-gradient(180deg,var(--bg2) 0%,var(--bg) 58%,#03070f 100%);
-      min-height:100vh;
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #05080f 0%, #02040a 100%);
+      min-height: 100vh;
     }
-    .app{max-width:430px;margin:0 auto;padding:14px 12px 110px}
-    .hero{
-      position:sticky;top:0;z-index:20;padding:18px;border-radius:30px;
-      background:linear-gradient(180deg,rgba(22,34,56,.96),rgba(9,16,28,.94));
-      border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px);
-      box-shadow:var(--shadow);margin-bottom:12px;
+
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 10px 12px 110px;
     }
-    .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#c5d4ea;margin-bottom:8px}
-    h1{margin:0;font-size:30px;letter-spacing:-.04em;line-height:1.02}
-    .sub{margin-top:8px;color:#c8d4e7;font-size:14px;line-height:1.45}
-    .section{background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(16px);box-shadow:var(--shadow);border-radius:var(--radius);padding:16px;margin-top:12px}
-    .section h2{margin:0 0 10px;font-size:18px;letter-spacing:-.02em}
-    .muted{color:var(--muted);font-size:13px;line-height:1.5}
-    .grid2,.grid3{display:grid;gap:10px}.grid2{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:repeat(3,1fr)}
-    .card,.module,.row,.trend,.input-card{background:var(--panel-strong);border:1px solid var(--line);border-radius:22px;padding:14px}
-    .card-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#c5d2e4;margin-bottom:8px}
-    .big{font-size:34px;line-height:1;font-weight:800;letter-spacing:-.04em}
-    .tiny{color:var(--muted);font-size:12px;line-height:1.45;margin-top:6px}
-    .pill{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
-    .good{color:#8ff3cb;background:rgba(47,226,168,.14)}.warn{color:#ffe099;background:rgba(255,203,104,.14)}.bad{color:#ffb6bb;background:rgba(255,124,135,.14)}.blue{color:#b7dbff;background:rgba(116,184,255,.14)}
-    .today-layout,.module-grid,.stack,.iqos-widget{display:grid;gap:12px}
-    .gauge-wrap{display:grid;justify-items:center;text-align:center;gap:12px}
-    .gauge-box{width:100%;max-width:340px;position:relative}
-    .gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
-    .gauge-score{font-size:60px;line-height:1;font-weight:900;letter-spacing:-.06em}
-    .gauge-label{margin-top:6px;font-size:13px;text-transform:uppercase;letter-spacing:.11em;color:#d6deec}
-    .row-top,.module-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
-    .name{font-size:15px;font-weight:700}.value{font-size:14px;font-weight:700}
-    .meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px;margin-bottom:8px}
-    .bar{height:10px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
-    .fill{height:100%;border-radius:999px}.fill-good{background:linear-gradient(90deg,#2fe2a8,#75f1cb)}.fill-warn{background:linear-gradient(90deg,#ffbe57,#ffdd9b)}.fill-bad{background:linear-gradient(90deg,#ff6c77,#ffafb4)}.fill-blue{background:linear-gradient(90deg,#6eb5ff,#9ed3ff)}.fill-violet{background:linear-gradient(90deg,#ad8dff,#ceb8ff)}
-    table{width:100%;border-collapse:collapse;font-size:13px} th,td{padding:10px 6px;text-align:left;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.07)} th{color:#c3d0e3;font-size:11px;text-transform:uppercase;letter-spacing:.08em} tr:last-child td{border-bottom:0}
-    svg{width:100%;height:auto;display:block}.axis{stroke:rgba(255,255,255,.12);stroke-width:1}.tick{fill:#90a3bf;font-size:10px}.line-red{fill:none;stroke:#ff8b8b;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.line-green{fill:none;stroke:#2fe2a8;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.line-blue{fill:none;stroke:#6eb5ff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.line-violet{fill:none;stroke:#b69cff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-    label{display:block;font-size:12px;color:#c8d4e4;margin-bottom:6px}.input-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-    input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:white;border-radius:14px;padding:12px;font-size:14px;outline:none}
-    button{appearance:none;border:0;border-radius:16px;padding:13px 14px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:10px}
-    .btn-primary{background:linear-gradient(90deg,#6db8ff,#7df2c8);color:#031018}.btn-secondary{background:rgba(255,255,255,.08);color:white}
-    .iqos-number{font-size:44px;line-height:1;font-weight:800;letter-spacing:-.04em}.iqos-buttons{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:10px}.iqos-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .status{white-space:pre-wrap}
-    .tabs{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:calc(100% - 24px);max-width:430px;background:rgba(10,16,27,.94);border:1px solid rgba(255,255,255,.08);border-radius:22px;box-shadow:var(--shadow);padding:8px;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;z-index:30;backdrop-filter:blur(18px)}
-    .tab{text-decoration:none;color:#c6d2e5;font-size:11px;text-align:center;padding:8px 4px;border-radius:16px;background:rgba(255,255,255,.03)}.tab.active{color:white;background:rgba(255,255,255,.09)}
-    .footer{color:var(--muted);text-align:center;font-size:12px;line-height:1.5;padding:8px 6px 0}
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 4px 12px;
+      background: linear-gradient(180deg, rgba(3,6,12,.96), rgba(3,6,12,.82), rgba(3,6,12,0));
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar-title {
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #d8e2f3;
+    }
+
+    .topbar-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .screen {
+      display: none;
+      gap: 12px;
+    }
+
+    .screen.active {
+      display: grid;
+    }
+
+    .section {
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      letter-spacing: .02em;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: #c9d7eb;
+      margin-bottom: 8px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .grid2, .grid3 {
+      display: grid;
+      gap: 10px;
+    }
+
+    .grid2 { grid-template-columns: repeat(2, 1fr); }
+    .grid3 { grid-template-columns: repeat(3, 1fr); }
+
+    .card, .module, .row, .stat-card, .mini-ring {
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 14px;
+    }
+
+    .card-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: #c7d5ea;
+      margin-bottom: 8px;
+    }
+
+    .big {
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -.05em;
+    }
+
+    .medium {
+      font-size: 22px;
+      line-height: 1.1;
+      font-weight: 750;
+      letter-spacing: -.03em;
+    }
+
+    .tiny {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin-top: 6px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .good { color: #a8ffd4; background: rgba(32,227,141,.12); }
+    .warn { color: #ffe4a6; background: rgba(255,198,91,.12); }
+    .bad { color: #ffc0c5; background: rgba(255,116,125,.12); }
+    .blue { color: #c3e3ff; background: rgba(62,161,255,.12); }
+
+    .row-top, .module-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .name { font-size: 15px; font-weight: 700; }
+    .value { font-size: 14px; font-weight: 700; }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .bar {
+      height: 8px;
+      background: rgba(255,255,255,.06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .fill { height: 100%; border-radius: 999px; }
+    .fill-green { background: linear-gradient(90deg, var(--green), var(--green2)); }
+    .fill-blue { background: linear-gradient(90deg, var(--blue), var(--blue2)); }
+    .fill-yellow { background: linear-gradient(90deg, #f6b94a, #ffd98d); }
+    .fill-red { background: linear-gradient(90deg, #ff646f, #ffb0b5); }
+
+    .ring-wrap {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+    }
+
+    .ring-box {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .ring-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .ring-score {
+      font-size: 58px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: -.06em;
+    }
+
+    .ring-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #d1deef;
+      margin-top: 6px;
+    }
+
+    .triple-rings {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .mini-ring {
+      text-align: center;
+      padding: 10px;
+    }
+
+    .mini-ring svg {
+      width: 88px;
+      height: 88px;
+      display: block;
+      margin: 0 auto 6px;
+    }
+
+    .small-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #cdd8ea;
+    }
+
+    .small-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.04em;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .axis { stroke: rgba(255,255,255,.10); stroke-width: 1; }
+    .tick { fill: #8ea2c3; font-size: 10px; }
+    .line-blue { fill: none; stroke: #4da9ff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .line-green { fill: none; stroke: #2fe2a8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .line-yellow { fill: none; stroke: #ffc65b; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .line-red { fill: none; stroke: #ff7c87; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 10px 6px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #c7d5ea;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #c8d4e4;
+      margin-bottom: 6px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      color: #fff;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #4ca8ff, #73ffc2);
+      color: #041019;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .iqos-number {
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -.04em;
+    }
+
+    .iqos-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr 1fr;
+      gap: 10px;
+    }
+
+    .iqos-mini {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .status {
+      white-space: pre-wrap;
+    }
+
+    .tabs {
+      position: fixed;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 430px;
+      background: rgba(8,12,20,.94);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 8px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+    }
+
+    .tab {
+      appearance: none;
+      border: 0;
+      background: rgba(255,255,255,.03);
+      color: #c7d4e8;
+      font-size: 11px;
+      text-align: center;
+      padding: 10px 4px;
+      border-radius: 16px;
+      margin: 0;
+    }
+
+    .tab.active {
+      color: #fff;
+      background: rgba(255,255,255,.10);
+    }
+
+    .footer {
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 8px 6px 0;
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="hero" id="today">
-      <div class="eyebrow">Christopher • cockpit santé premium</div>
-      <h1>Health Cockpit V10.2</h1>
-      <div class="sub">Import labo image corrigé, intégration du bilan du 10/09/2022, compteur IQOS dynamique, simulation et tendances.</div>
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Health Cockpit V11</div>
+        <div class="topbar-sub">Style inspiré de Whoop • multi-écrans</div>
+      </div>
+      <div class="pill blue" id="topbarBadge">Today</div>
     </div>
 
-```
-<section class="section">
-  <h2>Today</h2>
-  <div class="today-layout">
-    <div class="gauge-wrap">
-      <div class="gauge-box">
-        <svg viewBox="0 0 320 210" aria-label="Jauge score santé">
-          <path d="M40 170 A120 120 0 0 1 100 66" fill="none" stroke="rgba(47,226,168,.22)" stroke-width="22" stroke-linecap="round"></path>
-          <path d="M100 66 A120 120 0 0 1 220 50" fill="none" stroke="rgba(255,203,104,.24)" stroke-width="22" stroke-linecap="round"></path>
-          <path d="M220 50 A120 120 0 0 1 280 170" fill="none" stroke="rgba(255,124,135,.24)" stroke-width="22" stroke-linecap="round"></path>
-          <path id="gaugeProgress" d="M40 170 A120 120 0 0 1 280 170" fill="none" stroke="url(#gradGauge)" stroke-width="12" stroke-linecap="round" pathLength="100" stroke-dasharray="74 100"></path>
-          <defs><linearGradient id="gradGauge" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2fe2a8"></stop><stop offset="55%" stop-color="#ffcb68"></stop><stop offset="100%" stop-color="#ff7c87"></stop></linearGradient></defs>
+    <section class="screen active" id="screen-today">
+      <div class="section">
+        <div class="eyebrow">Today</div>
+        <div class="ring-wrap">
+          <div class="ring-box">
+            <svg viewBox="0 0 320 220" aria-label="Jauge score santé">
+              <path d="M40 176 A120 120 0 0 1 280 176" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="22" stroke-linecap="round"></path>
+              <path id="gaugeProgress" d="M40 176 A120 120 0 0 1 280 176" fill="none" stroke="url(#gradGauge)" stroke-width="12" stroke-linecap="round" pathLength="100" stroke-dasharray="74 100"></path>
+              <defs>
+                <linearGradient id="gradGauge" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#20e38d"></stop>
+                  <stop offset="55%" stop-color="#ffc65b"></stop>
+                  <stop offset="100%" stop-color="#ff747d"></stop>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-score" id="scoreValue">74</div>
+              <div class="ring-label" id="scoreLabel">Bon / à optimiser</div>
+              <div class="pill warn" id="scoreDelta">+0 vs 09/2022</div>
+            </div>
+          </div>
+          <div class="muted">Le score combine athéro, récupération, métabolisme, fitness et impact tabac du jour.</div>
+        </div>
+      </div>
+
+      <div class="triple-rings">
+        <div class="mini-ring">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"></circle>
+            <circle id="miniRecoveryRing" cx="50" cy="50" r="38" fill="none" stroke="#20e38d" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)" pathLength="100" stroke-dasharray="73 100"></circle>
+          </svg>
+          <div class="small-title">Recovery</div>
+          <div class="small-value" id="miniRecoveryValue">73%</div>
+        </div>
+
+        <div class="mini-ring">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"></circle>
+            <circle id="miniAtheroRing" cx="50" cy="50" r="38" fill="none" stroke="#4da9ff" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)" pathLength="100" stroke-dasharray="58 100"></circle>
+          </svg>
+          <div class="small-title">Athero</div>
+          <div class="small-value" id="miniAtheroValue">58</div>
+        </div>
+
+        <div class="mini-ring">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"></circle>
+            <circle id="miniLongevityRing" cx="50" cy="50" r="38" fill="none" stroke="#3ea1ff" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)" pathLength="100" stroke-dasharray="79 100"></circle>
+          </svg>
+          <div class="small-title">Longevity</div>
+          <div class="small-value" id="miniLongevityValue">79</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="row-top">
+          <div class="name">Health Monitor</div>
+          <div class="pill good" id="monitorBadge">Within range</div>
+        </div>
+        <div class="grid2">
+          <div class="stat-card">
+            <div class="card-title">Bio Age</div>
+            <div class="medium" id="bioAgeValue">39,4</div>
+            <div class="tiny" id="bioAgeDelta">plus jeune que l'âge réel</div>
+          </div>
+          <div class="stat-card">
+            <div class="card-title">Stress monitor</div>
+            <div class="medium" id="stressText">Modéré</div>
+            <div class="tiny" id="stressSub">tabac + athéro</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="row-top">
+          <div class="name">IQOS Tracker</div>
+          <div class="pill warn" id="iqosStatus">objectif : 0</div>
+        </div>
+        <div class="iqos-widget">
+          <div>
+            <div class="iqos-number" id="iqosCount">10</div>
+            <div class="tiny">sticks aujourd'hui</div>
+          </div>
+          <div class="iqos-buttons">
+            <button class="btn-secondary" id="iqosMinusBtn">-1</button>
+            <button class="btn-primary" id="iqosPlusBtn">+1 IQOS</button>
+            <button class="btn-secondary" id="iqosResetBtn">Reset</button>
+          </div>
+          <div class="iqos-mini">
+            <div class="card">
+              <div class="card-title">Impact</div>
+              <div class="big" id="iqosImpactValue">-3</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Score tabac</div>
+              <div class="big" id="tobaccoMiniCard">40</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Tendance</div>
+              <div class="big" id="iqosTrendCard">→</div>
+            </div>
+          </div>
+          <div class="tiny" id="iqosMessage">Réduire l'IQOS vers 0 fera monter le score global.</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="row-top">
+          <div class="name">Daily outlook</div>
+          <div class="pill blue">My day</div>
+        </div>
+        <div class="muted" id="todaySummary">Score influencé positivement par la récupération et négativement par l'axe LDL/ApoB + IQOS.</div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-health">
+      <div class="section">
+        <div class="eyebrow">Health</div>
+        <div class="grid2">
+          <div class="module">
+            <div class="module-top"><div class="name">Athero Risk</div><div class="value" id="lipidScoreText">58/100</div></div>
+            <div class="meta"><span>ApoB, LDL, HDL, TG, Lp(a), CRP</span><span>priorité</span></div>
+            <div class="bar"><div class="fill fill-red" id="lipidBar" style="width:58%"></div></div>
+          </div>
+
+          <div class="module">
+            <div class="module-top"><div class="name">Recovery</div><div class="value" id="cardioScoreText">73/100</div></div>
+            <div class="meta"><span>HRV, FCR, sommeil, VO₂max</span><span>solide</span></div>
+            <div class="bar"><div class="fill fill-green" id="cardioBar" style="width:73%"></div></div>
+          </div>
+
+          <div class="module">
+            <div class="module-top"><div class="name">Metabolic</div><div class="value" id="metabolicScoreText">88/100</div></div>
+            <div class="meta"><span>glycémie, CRP, terrain global</span><span>très bon</span></div>
+            <div class="bar"><div class="fill fill-green" id="metabolicBar" style="width:88%"></div></div>
+          </div>
+
+          <div class="module">
+            <div class="module-top"><div class="name">Fitness</div><div class="value" id="fitnessScoreText">85/100</div></div>
+            <div class="meta"><span>VO₂max, muscle, masse grasse</span><span>favorable</span></div>
+            <div class="bar"><div class="fill fill-blue" id="fitnessBar" style="width:85%"></div></div>
+          </div>
+
+          <div class="module" style="grid-column: 1 / -1;">
+            <div class="module-top"><div class="name">IQOS Impact</div><div class="value" id="tobaccoScoreText">40/100</div></div>
+            <div class="meta"><span>objectif : 0</span><span>évolutif</span></div>
+            <div class="bar"><div class="fill fill-yellow" id="tobaccoBar" style="width:40%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Encouragements</h2>
+        <div class="row" id="encouragementBox"></div>
+        <div class="row" style="margin-top:10px;">
+          <p class="muted" id="aiAnalysisBox">Analyse locale : chargement…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-trends">
+      <div class="section">
+        <div class="eyebrow">Trends</div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Score actuel</div>
+            <div class="big" id="scoreCurrentCard">74</div>
+            <div class="tiny">dernière estimation</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Évolution</div>
+            <div class="big" id="scoreChangeCard">+7</div>
+            <div class="tiny">depuis 09/2022</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Health Score Trend</h2>
+        <svg viewBox="0 0 360 170" aria-label="Courbe score global">
+          <line class="axis" x1="26" y1="140" x2="340" y2="140"></line>
+          <line class="axis" x1="26" y1="24" x2="26" y2="140"></line>
+          <text class="tick" x="10" y="142">60</text>
+          <text class="tick" x="10" y="106">70</text>
+          <text class="tick" x="10" y="70">80</text>
+          <text class="tick" x="10" y="34">90</text>
+          <path class="line-blue" id="scoreLine" d="M40 120 L97 111 L154 96 L211 88 L268 76 L325 84"></path>
         </svg>
-        <div class="gauge-center">
-          <div class="gauge-score" id="scoreValue">74</div>
-          <div class="gauge-label" id="scoreLabel">Bon / à optimiser</div>
-          <div class="pill warn" id="scoreDelta">+0 vs 03/2026</div>
+        <div class="tiny">Lecture plus nette avec un tracé fin sur fond noir.</div>
+      </div>
+
+      <div class="section">
+        <h2>Lipides vs Score</h2>
+        <svg viewBox="0 0 360 190" aria-label="Courbes lipidiques">
+          <line class="axis" x1="26" y1="150" x2="340" y2="150"></line>
+          <line class="axis" x1="26" y1="24" x2="26" y2="150"></line>
+          <path class="line-red" d="M40 36 L97 52 L154 67 L230 65 L325 65"></path>
+          <path class="line-green" d="M40 120 L97 126 L154 126 L230 121 L325 124"></path>
+          <path class="line-yellow" d="M40 40 L97 46 L154 81 L230 99 L325 71"></path>
+          <path class="line-blue" d="M40 136 L97 122 L154 105 L230 93 L325 89"></path>
+        </svg>
+        <div class="tiny">2022 montre un profil lipidique plus dégradé qu'aujourd'hui, même si l'axe athéro reste à corriger.</div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-labs">
+      <div class="section">
+        <div class="eyebrow">Labs</div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Whoop Bio Age</div>
+            <div class="big">39,4</div>
+            <div class="tiny">environ 1,6 an plus jeune</div>
+            <div class="pill good">favorable</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Bilan anti-âge 2025</div>
+            <div class="big">79</div>
+            <div class="tiny">sous-score longévité</div>
+            <div class="pill blue">nuancé</div>
+          </div>
         </div>
       </div>
-      <div class="muted">Le score combine athéro, récupération, métabolisme, fitness et impact tabac du jour.</div>
-    </div>
 
-    <div class="grid3">
-      <div class="card"><div class="card-title">Bio Age</div><div class="big" id="bioAgeValue">39,4</div><div class="tiny" id="bioAgeDelta">plus jeune que l'âge réel</div></div>
-      <div class="card"><div class="card-title">Longevity</div><div class="big" id="longevityCard">79</div><div class="tiny">signal long terme</div></div>
-      <div class="card"><div class="card-title">Athero</div><div class="big" id="atheroCard">58</div><div class="tiny">levier principal</div></div>
-    </div>
-
-    <div class="card">
-      <div class="row-top"><div class="name">IQOS Tracker</div><div class="pill warn" id="iqosStatus">objectif : 0</div></div>
-      <div class="iqos-widget">
-        <div><div class="iqos-number" id="iqosCount">10</div><div class="tiny">sticks aujourd'hui</div></div>
-        <div class="iqos-buttons"><button class="btn-secondary" id="iqosMinusBtn">-1</button><button class="btn-primary" id="iqosPlusBtn">+1 IQOS</button><button class="btn-secondary" id="iqosResetBtn">Reset</button></div>
-        <div class="iqos-mini">
-          <div class="card"><div class="card-title">Impact score</div><div class="big" id="iqosImpactValue">-3</div></div>
-          <div class="card"><div class="card-title">Score tabac</div><div class="big" id="tobaccoMiniCard">40</div></div>
-          <div class="card"><div class="card-title">Tendance</div><div class="big" id="iqosTrendCard">→</div></div>
-        </div>
-        <div class="tiny" id="iqosMessage">Réduire l'IQOS vers 0 fera monter le score global et baisser l'âge biologique.</div>
+      <div class="section">
+        <h2>Historique labo</h2>
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Total</th><th>LDL</th><th>HDL</th><th>TG</th><th>Score</th></tr>
+          </thead>
+          <tbody id="historyTable"></tbody>
+        </table>
       </div>
-    </div>
-  </div>
-</section>
 
-<section class="section" id="insights">
-  <h2>Insights</h2>
-  <div class="module-grid">
-    <div class="module"><div class="module-top"><div class="name">Athero Risk</div><div class="value" id="lipidScoreText">58/100</div></div><div class="meta"><span>ApoB, LDL, HDL, TG, Lp(a), CRP</span><span>priorité</span></div><div class="bar"><div class="fill fill-bad" id="lipidBar" style="width:58%"></div></div></div>
-    <div class="module"><div class="module-top"><div class="name">Recovery</div><div class="value" id="cardioScoreText">73/100</div></div><div class="meta"><span>HRV, FCR, sommeil, VO₂max</span><span>solide</span></div><div class="bar"><div class="fill fill-blue" id="cardioBar" style="width:73%"></div></div></div>
-    <div class="module"><div class="module-top"><div class="name">Metabolic</div><div class="value" id="metabolicScoreText">88/100</div></div><div class="meta"><span>glycémie, CRP, terrain global</span><span>très bon</span></div><div class="bar"><div class="fill fill-good" id="metabolicBar" style="width:88%"></div></div></div>
-    <div class="module"><div class="module-top"><div class="name">Fitness</div><div class="value" id="fitnessScoreText">85/100</div></div><div class="meta"><span>VO₂max, muscle, masse grasse</span><span>favorable</span></div><div class="bar"><div class="fill fill-violet" id="fitnessBar" style="width:85%"></div></div></div>
-    <div class="module"><div class="module-top"><div class="name">IQOS Impact</div><div class="value" id="tobaccoScoreText">40/100</div></div><div class="meta"><span>objectif : 0</span><span>évolutif</span></div><div class="bar"><div class="fill fill-warn" id="tobaccoBar" style="width:40%"></div></div></div>
-  </div>
-</section>
+      <div class="section">
+        <h2>Commentaires</h2>
+        <div class="row">
+          <div class="row-top"><div class="name">2022 intégré</div><div class="pill blue">ajouté</div></div>
+          <p class="muted">Cholestérol total 2,76 g/L, LDL 2,01 g/L, HDL 0,39 g/L, TG 1,94 g/L, CRP 0,60 mg/L, créatinine 9,89 mg/L, DFG 99, ASAT/ALAT 20/20, GGT 36, PSA 0,831, plaquettes 129 000.</p>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <div class="row-top"><div class="name">Ce qui rassure</div><div class="pill good">solide</div></div>
+          <p class="muted">CRP basse, fonction rénale normale, enzymes hépatiques normales, PSA normal, D-dimères normaux, DFG normal.</p>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <div class="row-top"><div class="name">Axes à corriger</div><div class="pill warn">prioritaire</div></div>
+          <p class="muted">Dès 2022, LDL, cholestérol total et triglycérides étaient élevés. Thrombopénie légère à surveiller à l'époque.</p>
+        </div>
+      </div>
+    </section>
 
-<section class="section" id="trends">
-  <h2>Trends</h2>
-  <div class="grid2">
-    <div class="card"><div class="card-title">Score actuel</div><div class="big" id="scoreCurrentCard">74</div><div class="tiny">dernière estimation</div></div>
-    <div class="card"><div class="card-title">Évolution</div><div class="big" id="scoreChangeCard">+7</div><div class="tiny">depuis 09/2022</div></div>
-  </div>
-  <div class="trend">
-    <h3>Évolution du score global</h3>
-    <svg viewBox="0 0 360 170" aria-label="Courbe score global">
-      <line class="axis" x1="26" y1="140" x2="340" y2="140"></line><line class="axis" x1="26" y1="24" x2="26" y2="140"></line>
-      <text class="tick" x="10" y="142">60</text><text class="tick" x="10" y="106">70</text><text class="tick" x="10" y="70">80</text><text class="tick" x="10" y="34">90</text>
-      <path class="line-blue" id="scoreLine" d="M40 120 L97 111 L154 96 L211 88 L268 76 L325 84"></path>
-    </svg>
-    <div class="caption">Le bilan du 10/09/2022 a été ajouté comme point de départ historique.</div>
-  </div>
-  <div class="trend">
-    <h3>Lipides et score</h3>
-    <svg viewBox="0 0 360 190" aria-label="Courbes lipidiques">
-      <line class="axis" x1="26" y1="150" x2="340" y2="150"></line><line class="axis" x1="26" y1="24" x2="26" y2="150"></line>
-      <path class="line-red" d="M40 36 L97 52 L154 67 L230 65 L325 65"></path>
-      <path class="line-green" d="M40 120 L97 126 L154 126 L230 121 L325 124"></path>
-      <path class="line-blue" d="M40 40 L97 46 L154 81 L230 99 L325 71"></path>
-      <path class="line-violet" d="M40 136 L97 122 L154 105 L230 93 L325 89"></path>
-    </svg>
-    <div class="legend"><span class="l1">LDL</span><span class="l2">HDL</span><span class="l3">Triglycérides</span><span class="l4">Score</span></div>
-    <div class="caption">2022 montre un profil lipidique plus dégradé qu'aujourd'hui, même si l'axe athéro reste à corriger.</div>
-  </div>
-</section>
+    <section class="screen" id="screen-imports">
+      <div class="section">
+        <div class="eyebrow">Imports</div>
+        <div class="row">
+          <div class="row-top"><div class="name">Import Apple Health JSON</div><div class="pill blue">corrigé</div></div>
+          <p class="muted">Importe un JSON avec clés comme hrv, sleep, vo2, rhr, iqos, ldl, hdl, tg, apob.</p>
+          <input id="healthFileInput" type="file" accept=".json" />
+          <button class="btn-secondary" id="importHealthBtn">Importer JSON santé</button>
+        </div>
 
-<section class="section" id="labs">
-  <h2>Labs</h2>
-  <div class="grid2">
-    <div class="card"><div class="card-title">Whoop Bio Age</div><div class="big">39,4</div><div class="tiny">environ 1,6 an plus jeune</div><div class="pill good">favorable</div></div>
-    <div class="card"><div class="card-title">Bilan anti-âge 2025</div><div class="big">79</div><div class="tiny">sous-score longévité</div><div class="pill blue">nuancé</div></div>
-  </div>
-  <div class="stack" style="margin-top:10px;">
-    <div class="row"><div class="row-top"><div class="name">2022 intégré</div><div class="pill blue">ajouté</div></div><p class="muted">Cholestérol total 2,76 g/L, LDL 2,01 g/L, HDL 0,39 g/L, TG 1,94 g/L, CRP 0,60 mg/L, créatinine 9,89 mg/L, DFG 99, ASAT/ALAT 20/20, GGT 36, PSA 0,831, plaquettes 129 000.</p></div>
-    <div class="row"><div class="row-top"><div class="name">Ce qui rassure</div><div class="pill good">solide</div></div><p class="muted">CRP basse, fonction rénale normale, enzymes hépatiques normales, PSA normal, D-dimères normaux, DFG normal.</p></div>
-    <div class="row"><div class="row-top"><div class="name">Axes à corriger</div><div class="pill warn">prioritaire</div></div><p class="muted">Dès 2022, LDL, cholestérol total et triglycérides étaient élevés. Thrombopénie légère à surveiller à l'époque (129 000/mm3).</p></div>
-  </div>
-  <table style="margin-top:10px;"><thead><tr><th>Date</th><th>Total</th><th>LDL</th><th>HDL</th><th>TG</th><th>Score</th></tr></thead><tbody id="historyTable"></tbody></table>
-</section>
+        <div class="row" style="margin-top:10px;">
+          <div class="row-top"><div class="name">Import labo photo</div><div class="pill warn">OCR image</div></div>
+          <p class="muted">Sélectionne une photo lisible du bilan. Le moteur OCR lit les images. PDF non géré dans cette version.</p>
+          <input id="labPhotoInput" type="file" accept="image/*" />
+          <button class="btn-secondary" id="scanLabBtn">Scanner la photo du labo</button>
+          <div class="tiny status" id="ocrStatus">Statut OCR : prêt.</div>
+        </div>
 
-<section class="section" id="devices">
-  <h2>Devices & Imports</h2>
-  <div class="stack">
-    <div class="row">
-      <div class="row-top"><div class="name">Import Apple Health JSON</div><div class="pill blue">corrigé</div></div>
-      <p class="muted">Importe un JSON avec clés comme hrv, sleep, vo2, rhr, iqos, ldl, hdl, tg, apob.</p>
-      <input id="healthFileInput" type="file" accept=".json" />
-      <button class="btn-secondary" id="importHealthBtn">Importer JSON santé</button>
-    </div>
-    <div class="row">
-      <div class="row-top"><div class="name">Import labo photo</div><div class="pill warn">OCR image</div></div>
-      <p class="muted">Sélectionne une photo lisible du bilan. L'OCR fonctionne côté navigateur pour extraire les marqueurs principaux. PDF non géré dans cette version, images oui.</p>
-      <input id="labPhotoInput" type="file" accept="image/*" />
-      <button class="btn-secondary" id="scanLabBtn">Scanner la photo du labo</button>
-      <div class="tiny status" id="ocrStatus">Statut OCR : prêt.</div>
-    </div>
-    <div class="row">
-      <div class="row-top"><div class="name">Sauvegarde cloud</div><div class="pill good">exportable</div></div>
-      <p class="muted">Export / import JSON pour iCloud Drive, Dropbox, Google Drive ou sauvegarde locale.</p>
-      <button class="btn-secondary" id="exportJsonBtn">Exporter la sauvegarde JSON</button>
-      <input id="restoreJsonInput" type="file" accept=".json" />
-      <button class="btn-secondary" id="restoreJsonBtn">Restaurer une sauvegarde</button>
-    </div>
-  </div>
-</section>
+        <div class="row" style="margin-top:10px;">
+          <div class="row-top"><div class="name">Simulation</div><div class="pill good">éditable</div></div>
+          <div class="input-grid">
+            <div><label for="dateInput">Date</label><input id="dateInput" type="text" placeholder="ex. 06/2026" /></div>
+            <div><label for="ldlInput">LDL (g/L)</label><input id="ldlInput" type="number" step="0.01" placeholder="1.50" /></div>
+            <div><label for="hdlInput">HDL (g/L)</label><input id="hdlInput" type="number" step="0.01" placeholder="0.45" /></div>
+            <div><label for="tgInput">Triglycérides (g/L)</label><input id="tgInput" type="number" step="0.01" placeholder="1.20" /></div>
+            <div><label for="apobInput">ApoB (g/L)</label><input id="apobInput" type="number" step="0.01" placeholder="1.10" /></div>
+            <div><label for="lpaInput">Lp(a) (mg/dL)</label><input id="lpaInput" type="number" step="0.1" placeholder="9.8" /></div>
+            <div><label for="crpInput">CRP us (mg/L)</label><input id="crpInput" type="number" step="0.01" placeholder="0.73" /></div>
+            <div><label for="vo2Input">VO₂max</label><input id="vo2Input" type="number" step="0.1" placeholder="45" /></div>
+            <div><label for="hrvInput">HRV (ms)</label><input id="hrvInput" type="number" step="1" placeholder="53" /></div>
+            <div><label for="rhrInput">FCR (bpm)</label><input id="rhrInput" type="number" step="1" placeholder="57" /></div>
+            <div><label for="sleepInput">Sommeil (h)</label><input id="sleepInput" type="number" step="0.1" placeholder="7.0" /></div>
+            <div><label for="iqosInput">IQOS / jour</label><input id="iqosInput" type="number" step="1" placeholder="10" /></div>
+          </div>
+          <button class="btn-primary" id="saveBtn">Enregistrer cette entrée</button>
+          <button class="btn-secondary" id="simulateBtn">Simuler l'impact</button>
+          <button class="btn-secondary" id="resetBtn">Réinitialiser</button>
+        </div>
 
-<section class="section" id="simulate">
-  <h2>Simulation</h2>
-  <div class="input-card">
-    <div class="input-grid">
-      <div><label for="dateInput">Date</label><input id="dateInput" type="text" placeholder="ex. 06/2026" /></div>
-      <div><label for="ldlInput">LDL (g/L)</label><input id="ldlInput" type="number" step="0.01" placeholder="1.50" /></div>
-      <div><label for="hdlInput">HDL (g/L)</label><input id="hdlInput" type="number" step="0.01" placeholder="0.45" /></div>
-      <div><label for="tgInput">Triglycérides (g/L)</label><input id="tgInput" type="number" step="0.01" placeholder="1.20" /></div>
-      <div><label for="apobInput">ApoB (g/L)</label><input id="apobInput" type="number" step="0.01" placeholder="1.10" /></div>
-      <div><label for="lpaInput">Lp(a) (mg/dL)</label><input id="lpaInput" type="number" step="0.1" placeholder="9.8" /></div>
-      <div><label for="crpInput">CRP us (mg/L)</label><input id="crpInput" type="number" step="0.01" placeholder="0.73" /></div>
-      <div><label for="vo2Input">VO₂max</label><input id="vo2Input" type="number" step="0.1" placeholder="45" /></div>
-      <div><label for="hrvInput">HRV (ms)</label><input id="hrvInput" type="number" step="1" placeholder="53" /></div>
-      <div><label for="rhrInput">FCR (bpm)</label><input id="rhrInput" type="number" step="1" placeholder="57" /></div>
-      <div><label for="sleepInput">Sommeil (h)</label><input id="sleepInput" type="number" step="0.1" placeholder="7.0" /></div>
-      <div><label for="iqosInput">IQOS / jour</label><input id="iqosInput" type="number" step="1" placeholder="10" /></div>
-    </div>
-    <button class="btn-primary" id="saveBtn">Enregistrer cette entrée</button>
-    <button class="btn-secondary" id="simulateBtn">Simuler l'impact</button>
-    <button class="btn-secondary" id="resetBtn">Réinitialiser</button>
-    <div class="tiny">L'import labo remplit automatiquement les champs reconnus, puis tu peux enregistrer.</div>
-  </div>
-</section>
+        <div class="row" style="margin-top:10px;">
+          <div class="row-top"><div class="name">Sauvegarde cloud</div><div class="pill good">exportable</div></div>
+          <button class="btn-secondary" id="exportJsonBtn">Exporter la sauvegarde JSON</button>
+          <input id="restoreJsonInput" type="file" accept=".json" />
+          <button class="btn-secondary" id="restoreJsonBtn">Restaurer une sauvegarde</button>
+        </div>
+      </div>
+    </section>
 
-<section class="section">
-  <h2>Encouragements</h2>
-  <div class="row" id="encouragementBox"></div>
-  <div class="row" style="margin-top:10px;"><p class="muted" id="aiAnalysisBox">Analyse locale : chargement…</p></div>
-</section>
-
-<div class="footer">V10.2 : bilan du 10/09/2022 intégré et import labo image activé pour les photos lisibles.</div>
-```
-
+    <div class="footer">V11 : navigation par écrans, fond noir plus profond, lignes plus nettes et présentation plus proche de Whoop.</div>
   </div>
 
   <nav class="tabs">
-    <a class="tab active" href="#today">Today</a>
-    <a class="tab" href="#trends">Trends</a>
-    <a class="tab" href="#labs">Labs</a>
-    <a class="tab" href="#devices">Devices</a>
-    <a class="tab" href="#simulate">Sim</a>
-    <a class="tab" href="#insights">Insights</a>
+    <button class="tab active" data-screen="today">Today</button>
+    <button class="tab" data-screen="health">Health</button>
+    <button class="tab" data-screen="trends">Trends</button>
+    <button class="tab" data-screen="labs">Labs</button>
+    <button class="tab" data-screen="imports">Imports</button>
   </nav>
 
   <script>
     const baseHistory = [
-      { date:'09/2022', total:2.76, ldl:2.01, hdl:0.39, tg:1.94, apob:null, lpa:null, crp:0.60, vo2:40, iqos:12, hrv:48, rhr:60, sleep:6.6, score:67,
-        extras:{ creatinine_mg_l:9.89, egfr:99, ast:20, alt:20, ggt:36, alp:79, psa:0.831, d_dimers:0.27, platelets:129000, hemoglobin:16.10, wbc:9060 } },
-      { date:'12/2023', total:2.57, ldl:1.86, hdl:0.36, tg:1.95, apob:1.34, lpa:9.8, crp:0.90, vo2:43, iqos:12, hrv:50, rhr:59, sleep:6.8, score:67 },
-      { date:'09/2024', total:2.32, ldl:1.66, hdl:0.36, tg:1.52, apob:1.34, lpa:9.8, crp:0.80, vo2:44, iqos:11, hrv:51, rhr:58, sleep:6.9, score:71 },
-      { date:'01/2025', total:2.63, ldl:1.69, hdl:0.44, tg:1.24, apob:1.34, lpa:9.8, crp:0.73, vo2:45, iqos:10, hrv:52, rhr:58, sleep:7.0, score:73 },
-      { date:'03/2025 anti-age', total:null, ldl:null, hdl:null, tg:null, apob:1.34, lpa:9.8, crp:0.73, vo2:45, iqos:10, hrv:52, rhr:58, sleep:7.0, score:76 },
-      { date:'03/2026', total:2.71, ldl:1.69, hdl:0.38, tg:1.68, apob:1.42, lpa:9.8, crp:0.73, vo2:45, iqos:10, hrv:53, rhr:57, sleep:7.04, score:74 }
+      {
+        date: '09/2022',
+        total: 2.76,
+        ldl: 2.01,
+        hdl: 0.39,
+        tg: 1.94,
+        apob: null,
+        lpa: null,
+        crp: 0.60,
+        vo2: 40,
+        iqos: 12,
+        hrv: 48,
+        rhr: 60,
+        sleep: 6.6,
+        score: 67,
+        extras: {
+          creatinine_mg_l: 9.89,
+          egfr: 99,
+          ast: 20,
+          alt: 20,
+          ggt: 36,
+          alp: 79,
+          psa: 0.831,
+          d_dimers: 0.27,
+          platelets: 129000,
+          hemoglobin: 16.10,
+          wbc: 9060
+        }
+      },
+      { date: '12/2023', total: 2.57, ldl: 1.86, hdl: 0.36, tg: 1.95, apob: 1.34, lpa: 9.8, crp: 0.90, vo2: 43, iqos: 12, hrv: 50, rhr: 59, sleep: 6.8, score: 67 },
+      { date: '09/2024', total: 2.32, ldl: 1.66, hdl: 0.36, tg: 1.52, apob: 1.34, lpa: 9.8, crp: 0.80, vo2: 44, iqos: 11, hrv: 51, rhr: 58, sleep: 6.9, score: 71 },
+      { date: '01/2025', total: 2.63, ldl: 1.69, hdl: 0.44, tg: 1.24, apob: 1.34, lpa: 9.8, crp: 0.73, vo2: 45, iqos: 10, hrv: 52, rhr: 58, sleep: 7.0, score: 73 },
+      { date: '03/2025 anti-age', total: null, ldl: null, hdl: null, tg: null, apob: 1.34, lpa: 9.8, crp: 0.73, vo2: 45, iqos: 10, hrv: 52, rhr: 58, sleep: 7.0, score: 76 },
+      { date: '03/2026', total: 2.71, ldl: 1.69, hdl: 0.38, tg: 1.68, apob: 1.42, lpa: 9.8, crp: 0.73, vo2: 45, iqos: 10, hrv: 53, rhr: 57, sleep: 7.04, score: 74 }
     ];
 
     const defaultState = {
-      current: { date:'03/2026', total:2.71, ldl:1.69, hdl:0.38, tg:1.68, apob:1.42, lpa:9.8, crp:0.73, vo2:45, iqos:10, hrv:53, rhr:57, sleep:7.04 },
+      current: {
+        date: '03/2026',
+        total: 2.71,
+        ldl: 1.69,
+        hdl: 0.38,
+        tg: 1.68,
+        apob: 1.42,
+        lpa: 9.8,
+        crp: 0.73,
+        vo2: 45,
+        iqos: 10,
+        hrv: 53,
+        rhr: 57,
+        sleep: 7.04
+      },
       history: [],
       iqosToday: 10
     };
 
-    function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
-    function scoreHDL(v){ return v==null ? 50 : clamp(((v-0.30)/(0.70-0.30))*100,0,100); }
-    function scoreLDL(v){ return v==null ? 50 : clamp(100-((v-0.9)/(2.1-0.9))*100,0,100); }
-    function scoreTG(v){ return v==null ? 50 : clamp(100-((v-0.8)/(2.2-0.8))*100,0,100); }
-    function scoreApoB(v){ return v==null ? 55 : clamp(100-((v-0.7)/(1.6-0.7))*100,0,100); }
-    function scoreHRV(v){ return v==null ? 50 : clamp(((v-30)/(75-30))*100,0,100); }
-    function scoreRHR(v){ return v==null ? 50 : clamp(100-((v-48)/(72-48))*100,0,100); }
-    function scoreSleep(v){ return v==null ? 50 : clamp(((v-5.5)/(8.2-5.5))*100,0,100); }
-    function scoreLpa(v){ return v==null ? 72 : clamp(100-((v-5)/(80-5))*100,0,100); }
-    function scoreCrp(v){ return v==null ? 75 : clamp(100-((v-0.3)/(3-0.3))*100,0,100); }
-    function scoreVo2(v){ return v==null ? 70 : clamp(((v-30)/(55-30))*100,0,100); }
-    function scoreIqos(v){ if(v==null)return 50; if(v<=0)return 100; if(v<=3)return 80; if(v<=7)return 60; if(v<=12)return 40; return 20; }
-    function iqosScoreImpact(v){ if(v==null)return 0; if(v<=0)return 5; if(v<=3)return 2; if(v<=7)return -1; if(v<=12)return -3; return -6; }
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function scoreHDL(v) { return v == null ? 50 : clamp(((v - 0.30) / (0.70 - 0.30)) * 100, 0, 100); }
+    function scoreLDL(v) { return v == null ? 50 : clamp(100 - ((v - 0.9) / (2.1 - 0.9)) * 100, 0, 100); }
+    function scoreTG(v) { return v == null ? 50 : clamp(100 - ((v - 0.8) / (2.2 - 0.8)) * 100, 0, 100); }
+    function scoreApoB(v) { return v == null ? 55 : clamp(100 - ((v - 0.7) / (1.6 - 0.7)) * 100, 0, 100); }
+    function scoreHRV(v) { return v == null ? 50 : clamp(((v - 30) / (75 - 30)) * 100, 0, 100); }
+    function scoreRHR(v) { return v == null ? 50 : clamp(100 - ((v - 48) / (72 - 48)) * 100, 0, 100); }
+    function scoreSleep(v) { return v == null ? 50 : clamp(((v - 5.5) / (8.2 - 5.5)) * 100, 0, 100); }
+    function scoreLpa(v) { return v == null ? 72 : clamp(100 - ((v - 5) / (80 - 5)) * 100, 0, 100); }
+    function scoreCrp(v) { return v == null ? 75 : clamp(100 - ((v - 0.3) / (3 - 0.3)) * 100, 0, 100); }
+    function scoreVo2(v) { return v == null ? 70 : clamp(((v - 30) / (55 - 30)) * 100, 0, 100); }
+    function scoreIqos(v) {
+      if (v == null) return 50;
+      if (v <= 0) return 100;
+      if (v <= 3) return 80;
+      if (v <= 7) return 60;
+      if (v <= 12) return 40;
+      return 20;
+    }
+    function iqosScoreImpact(v) {
+      if (v == null) return 0;
+      if (v <= 0) return 5;
+      if (v <= 3) return 2;
+      if (v <= 7) return -1;
+      if (v <= 12) return -3;
+      return -6;
+    }
 
-    function computeScores(data, iqosToday){
+    function computeScores(data, iqosToday) {
       const effectiveIqos = iqosToday ?? data.iqos ?? 10;
-      const athero = Math.round(scoreApoB(data.apob)*0.40 + scoreLDL(data.ldl)*0.20 + scoreHDL(data.hdl)*0.15 + scoreTG(data.tg)*0.10 + scoreLpa(data.lpa)*0.10 + scoreCrp(data.crp)*0.05);
-      const cardio = Math.round(scoreHRV(data.hrv)*0.35 + scoreRHR(data.rhr)*0.25 + scoreSleep(data.sleep)*0.20 + scoreVo2(data.vo2)*0.20);
-      const metabolic = Math.round(scoreCrp(data.crp)*0.20 + 73);
-      const fitness = Math.round(scoreVo2(data.vo2)*0.55 + 36);
+      const athero = Math.round(
+        scoreApoB(data.apob) * 0.40 +
+        scoreLDL(data.ldl) * 0.20 +
+        scoreHDL(data.hdl) * 0.15 +
+        scoreTG(data.tg) * 0.10 +
+        scoreLpa(data.lpa) * 0.10 +
+        scoreCrp(data.crp) * 0.05
+      );
+
+      const cardio = Math.round(
+        scoreHRV(data.hrv) * 0.35 +
+        scoreRHR(data.rhr) * 0.25 +
+        scoreSleep(data.sleep) * 0.20 +
+        scoreVo2(data.vo2) * 0.20
+      );
+
+      const metabolic = Math.round(scoreCrp(data.crp) * 0.20 + 73);
+      const fitness = Math.round(scoreVo2(data.vo2) * 0.55 + 36);
       const micronutrition = 72;
       const tobacco = scoreIqos(effectiveIqos);
-      let global = Math.round(athero*0.30 + cardio*0.25 + metabolic*0.20 + fitness*0.15 + micronutrition*0.10);
+
+      let global = Math.round(
+        athero * 0.30 +
+        cardio * 0.25 +
+        metabolic * 0.20 +
+        fitness * 0.15 +
+        micronutrition * 0.10
+      );
+
       global += iqosScoreImpact(effectiveIqos);
-      global = clamp(global,0,100);
-      const longevity = Math.round(athero*0.28 + cardio*0.24 + metabolic*0.18 + fitness*0.12 + micronutrition*0.10 + tobacco*0.08);
-      const bioAge = Math.max(32, Math.min(48, 41 - ((global-70)*0.16) - ((longevity-75)*0.08) + ((100-tobacco)*0.015)));
-      return { lipid:athero, cardio, metabolic, fitness, micronutrition, tobacco, longevity, global, bioAge };
+      global = clamp(global, 0, 100);
+
+      const longevity = Math.round(
+        athero * 0.28 +
+        cardio * 0.24 +
+        metabolic * 0.18 +
+        fitness * 0.12 +
+        micronutrition * 0.10 +
+        tobacco * 0.08
+      );
+
+      const bioAge = Math.max(
+        32,
+        Math.min(48, 41 - ((global - 70) * 0.16) - ((longevity - 75) * 0.08) + ((100 - tobacco) * 0.015))
+      );
+
+      return { lipid: athero, cardio, metabolic, fitness, micronutrition, tobacco, longevity, global, bioAge };
     }
 
-    function labelForScore(score){ if(score>=85)return 'Excellent'; if(score>=75)return 'Bon / solide'; if(score>=65)return 'Correct / à optimiser'; return 'Fragile / à corriger'; }
-    function loadState(){ try{ const raw = localStorage.getItem('healthCockpitV102'); return raw ? JSON.parse(raw) : defaultState; } catch(e){ return defaultState; } }
-    function saveState(state){ localStorage.setItem('healthCockpitV102', JSON.stringify(state)); }
-    function formatNum(v){ return v==null ? '—' : String(v).replace('.', ','); }
-    function getCombinedHistory(state){ return [...baseHistory, ...(state.history||[])].map(item => ({ ...item, score: item.score ?? computeScores(item, item.iqos ?? state.iqosToday).global })); }
-
-    function renderHistoryTable(history){
-      document.getElementById('historyTable').innerHTML = history.map(item => `<tr><td><strong>${item.date}</strong></td><td>${item.total==null?'—':formatNum(item.total)}</td><td>${item.ldl==null?'—':formatNum(item.ldl)}</td><td>${item.hdl==null?'—':formatNum(item.hdl)}</td><td>${item.tg==null?'—':formatNum(item.tg)}</td><td>${item.score}</td></tr>`).join('');
+    function labelForScore(score) {
+      if (score >= 85) return 'Excellent';
+      if (score >= 75) return 'Bon / solide';
+      if (score >= 65) return 'Correct / à optimiser';
+      return 'Fragile / à corriger';
     }
-    function scoreToY(score){ const min=60,max=90,top=24,bottom=140; const ratio=(score-min)/(max-min); return Math.round(bottom-ratio*(bottom-top)); }
-    function renderScoreLine(history){ const points=history.slice(-6); const xs=[40,97,154,211,268,325].slice(0,points.length); const d=points.map((p,i)=>`${i===0?'M':'L'}${xs[i]} ${scoreToY(p.score)}`).join(' '); document.getElementById('scoreLine').setAttribute('d', d || 'M40 120 L325 84'); }
 
-    function renderEncouragement(currentScores, previousScores, currentData, previousData, iqosToday){
-      const bullets=[];
-      if(previousScores){
-        const delta = currentScores.global - previousScores.global;
-        if(delta >= 3) bullets.push('progression visible');
-        else if(delta <= -3) bullets.push('baisse récente');
+    function loadState() {
+      try {
+        const raw = localStorage.getItem('healthCockpitV11');
+        return raw ? JSON.parse(raw) : defaultState;
+      } catch {
+        return defaultState;
       }
-      if(iqosToday===0) bullets.push('IQOS à 0 aujourd hui');
-      else if(iqosToday<=3) bullets.push('IQOS fortement réduit');
-      else if(iqosToday>=10) bullets.push('IQOS encore élevé');
-      if(currentScores.lipid < 60) bullets.push('axe athéro prioritaire');
-      if(currentScores.cardio >= 70) bullets.push('récupération solide');
-      document.getElementById('encouragementBox').innerHTML = `<div class="row-top"><div class="name">Encouragement du moment</div><div class="pill ${currentScores.global >= (previousScores?.global ?? currentScores.global) ? 'good' : 'warn'}">${currentScores.global >= (previousScores?.global ?? currentScores.global) ? 'encourageant' : 'à surveiller'}</div></div><p class="muted">Ton profil reste globalement bon sur la récupération et le métabolisme, avec un vrai levier sur l'axe LDL/ApoB + tabac.</p><p class="tiny">${bullets.join(' • ')}</p>`;
-      document.getElementById('aiAnalysisBox').textContent = `Analyse locale : score global ${currentScores.global}, longévité ${currentScores.longevity}, âge biologique ${currentScores.bioAge.toFixed(1).replace('.', ',')}. Le principal levier reste l'athéro-score ${currentScores.lipid}/100 et l'impact IQOS ${currentScores.tobacco}/100.`;
     }
 
-    function updateIQOSWidget(iqosToday, scores){
+    function saveState(state) {
+      localStorage.setItem('healthCockpitV11', JSON.stringify(state));
+    }
+
+    function formatNum(v) {
+      return v == null ? '—' : String(v).replace('.', ',');
+    }
+
+    function getCombinedHistory(state) {
+      return [...baseHistory, ...(state.history || [])].map(item => ({
+        ...item,
+        score: item.score ?? computeScores(item, item.iqos ?? state.iqosToday).global
+      }));
+    }
+
+    function renderHistoryTable(history) {
+      document.getElementById('historyTable').innerHTML = history.map(item =>
+        `<tr>
+          <td><strong>${item.date}</strong></td>
+          <td>${item.total == null ? '—' : formatNum(item.total)}</td>
+          <td>${item.ldl == null ? '—' : formatNum(item.ldl)}</td>
+          <td>${item.hdl == null ? '—' : formatNum(item.hdl)}</td>
+          <td>${item.tg == null ? '—' : formatNum(item.tg)}</td>
+          <td>${item.score}</td>
+        </tr>`
+      ).join('');
+    }
+
+    function scoreToY(score) {
+      const min = 60, max = 90, top = 24, bottom = 140;
+      const ratio = (score - min) / (max - min);
+      return Math.round(bottom - ratio * (bottom - top));
+    }
+
+    function renderScoreLine(history) {
+      const points = history.slice(-6);
+      const xs = [40, 97, 154, 211, 268, 325].slice(0, points.length);
+      const d = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${xs[i]} ${scoreToY(p.score)}`).join(' ');
+      document.getElementById('scoreLine').setAttribute('d', d || 'M40 120 L325 84');
+    }
+
+    function renderEncouragement(currentScores, previousScores, iqosToday) {
+      const bullets = [];
+      if (previousScores) {
+        const delta = currentScores.global - previousScores.global;
+        if (delta >= 3) bullets.push('progression visible');
+        else if (delta <= -3) bullets.push('baisse récente');
+      }
+      if (iqosToday === 0) bullets.push('IQOS à 0 aujourd hui');
+      else if (iqosToday <= 3) bullets.push('IQOS fortement réduit');
+      else if (iqosToday >= 10) bullets.push('IQOS encore élevé');
+      if (currentScores.lipid < 60) bullets.push('axe athéro prioritaire');
+      if (currentScores.cardio >= 70) bullets.push('récupération solide');
+
+      document.getElementById('encouragementBox').innerHTML =
+        `<div class="row-top">
+          <div class="name">Encouragement du moment</div>
+          <div class="pill ${currentScores.global >= (previousScores?.global ?? currentScores.global) ? 'good' : 'warn'}">
+            ${currentScores.global >= (previousScores?.global ?? currentScores.global) ? 'encourageant' : 'à surveiller'}
+          </div>
+        </div>
+        <p class="muted">Ton profil reste globalement bon sur la récupération et le métabolisme, avec un vrai levier sur l'axe LDL/ApoB + tabac.</p>
+        <p class="tiny">${bullets.join(' • ')}</p>`;
+
+      document.getElementById('aiAnalysisBox').textContent =
+        `Analyse locale : score global ${currentScores.global}, longévité ${currentScores.longevity}, âge biologique ${currentScores.bioAge.toFixed(1).replace('.', ',')}. Le principal levier reste l'athéro-score ${currentScores.lipid}/100 et l'impact IQOS ${currentScores.tobacco}/100.`;
+    }
+
+    function updateIQOSWidget(iqosToday, scores) {
       document.getElementById('iqosCount').textContent = iqosToday;
       document.getElementById('iqosImpactValue').textContent = iqosScoreImpact(iqosToday);
       document.getElementById('tobaccoMiniCard').textContent = scores.tobacco;
-      let trend='→', status='objectif : 0', msg='Réduire l IQOS vers 0 fera monter le score global et baisser l âge biologique.';
-      if(iqosToday===0){ trend='↓'; status='excellent'; msg='Excellent : aucun IQOS aujourd hui.'; }
-      else if(iqosToday<=3){ trend='↓'; status='réduction'; msg='Très bonne progression. Le tabac pèse beaucoup moins sur ton score.'; }
-      else if(iqosToday<=7){ trend='→'; status='modéré'; msg='Impact modéré du tabac. Continuer vers 0 améliorera nettement le score.'; }
-      else { trend='↑'; status='à réduire'; msg='Le tabac impacte encore significativement ton score santé.'; }
+
+      let trend = '→';
+      let status = 'objectif : 0';
+      let msg = 'Réduire l IQOS vers 0 fera monter le score global.';
+      let stress = 'Modéré';
+      let stressSub = 'tabac + athéro';
+      let monitor = 'Within range';
+
+      if (iqosToday === 0) {
+        trend = '↓';
+        status = 'excellent';
+        msg = 'Excellent : aucun IQOS aujourd hui.';
+        stress = 'Faible';
+        stressSub = 'bon contrôle';
+        monitor = 'Excellent';
+      } else if (iqosToday <= 3) {
+        trend = '↓';
+        status = 'réduction';
+        msg = 'Très bonne progression. Le tabac pèse beaucoup moins sur ton score.';
+        stress = 'Modéré';
+        stressSub = 'en amélioration';
+        monitor = 'Bon';
+      } else if (iqosToday <= 7) {
+        trend = '→';
+        status = 'modéré';
+        msg = 'Impact modéré du tabac. Continuer vers 0 améliorera nettement le score.';
+      } else {
+        trend = '↑';
+        status = 'à réduire';
+        msg = 'Le tabac impacte encore significativement ton score santé.';
+        stress = 'Élevé';
+        stressSub = 'tabac + lipides';
+        monitor = 'À corriger';
+      }
+
       document.getElementById('iqosTrendCard').textContent = trend;
       document.getElementById('iqosStatus').textContent = status;
       document.getElementById('iqosMessage').textContent = msg;
+      document.getElementById('stressText').textContent = stress;
+      document.getElementById('stressSub').textContent = stressSub;
+      document.getElementById('monitorBadge').textContent = monitor;
     }
 
-    function updateUI(){
+    function updateTodaySummary(scores, iqosToday) {
+      const parts = [];
+      if (scores.cardio >= 70) parts.push('récupération solide');
+      if (scores.lipid < 60) parts.push('axe LDL/ApoB à améliorer');
+      if (iqosToday >= 10) parts.push('impact tabac significatif');
+      else if (iqosToday <= 3) parts.push('bonne réduction de l IQOS');
+      document.getElementById('todaySummary').textContent = parts.join(' • ') || 'Résumé du jour disponible.';
+    }
+
+    function updateUI() {
       const state = loadState();
       const current = state.current;
       const iqosToday = state.iqosToday ?? current.iqos ?? 10;
@@ -356,32 +1019,52 @@
       const previousScores = previous ? computeScores(previous, previous.iqos ?? iqosToday) : null;
       const baseStart = history[0]?.score ?? 67;
       const deltaBase = scores.global - baseStart;
+
       document.getElementById('scoreValue').textContent = scores.global;
       document.getElementById('scoreLabel').textContent = labelForScore(scores.global);
-      document.getElementById('scoreDelta').textContent = (deltaBase>=0?'+':'') + deltaBase + ' vs 09/2022';
+      document.getElementById('scoreDelta').textContent = `${deltaBase >= 0 ? '+' : ''}${deltaBase} vs 09/2022`;
       document.getElementById('bioAgeValue').textContent = scores.bioAge.toFixed(1).replace('.', ',');
-      document.getElementById('bioAgeDelta').textContent = scores.bioAge < 41 ? `${(41-scores.bioAge).toFixed(1).replace('.', ',')} an(s) de moins que l'âge réel` : 'proche de l âge réel';
-      document.getElementById('longevityCard').textContent = scores.longevity;
-      document.getElementById('atheroCard').textContent = scores.lipid;
+      document.getElementById('bioAgeDelta').textContent = scores.bioAge < 41
+        ? `${(41 - scores.bioAge).toFixed(1).replace('.', ',')} an(s) de moins que l'âge réel`
+        : 'proche de l âge réel';
+
       document.getElementById('scoreCurrentCard').textContent = scores.global;
-      document.getElementById('scoreChangeCard').textContent = (deltaBase>=0?'+':'') + deltaBase;
-      document.getElementById('gaugeProgress').setAttribute('stroke-dasharray', scores.global + ' 100');
-      document.getElementById('lipidScoreText').textContent = scores.lipid + '/100';
-      document.getElementById('cardioScoreText').textContent = scores.cardio + '/100';
-      document.getElementById('metabolicScoreText').textContent = scores.metabolic + '/100';
-      document.getElementById('fitnessScoreText').textContent = scores.fitness + '/100';
-      document.getElementById('tobaccoScoreText').textContent = scores.tobacco + '/100';
-      document.getElementById('lipidBar').style.width = scores.lipid + '%';
-      document.getElementById('cardioBar').style.width = scores.cardio + '%';
-      document.getElementById('metabolicBar').style.width = scores.metabolic + '%';
-      document.getElementById('fitnessBar').style.width = scores.fitness + '%';
-      document.getElementById('tobaccoBar').style.width = scores.tobacco + '%';
-      ['date','ldl','hdl','tg','apob','lpa','crp','vo2','hrv','rhr','sleep'].forEach(key => { const el=document.getElementById(key+'Input'); if(el) el.value = current[key] ?? ''; });
+      document.getElementById('scoreChangeCard').textContent = `${deltaBase >= 0 ? '+' : ''}${deltaBase}`;
+
+      document.getElementById('gaugeProgress').setAttribute('stroke-dasharray', `${scores.global} 100`);
+      document.getElementById('miniRecoveryRing').setAttribute('stroke-dasharray', `${scores.cardio} 100`);
+      document.getElementById('miniAtheroRing').setAttribute('stroke-dasharray', `${scores.lipid} 100`);
+      document.getElementById('miniLongevityRing').setAttribute('stroke-dasharray', `${scores.longevity} 100`);
+      document.getElementById('miniRecoveryValue').textContent = `${scores.cardio}%`;
+      document.getElementById('miniAtheroValue').textContent = scores.lipid;
+      document.getElementById('miniLongevityValue').textContent = scores.longevity;
+
+      document.getElementById('lipidScoreText').textContent = `${scores.lipid}/100`;
+      document.getElementById('cardioScoreText').textContent = `${scores.cardio}/100`;
+      document.getElementById('metabolicScoreText').textContent = `${scores.metabolic}/100`;
+      document.getElementById('fitnessScoreText').textContent = `${scores.fitness}/100`;
+      document.getElementById('tobaccoScoreText').textContent = `${scores.tobacco}/100`;
+
+      document.getElementById('lipidBar').style.width = `${scores.lipid}%`;
+      document.getElementById('cardioBar').style.width = `${scores.cardio}%`;
+      document.getElementById('metabolicBar').style.width = `${scores.metabolic}%`;
+      document.getElementById('fitnessBar').style.width = `${scores.fitness}%`;
+      document.getElementById('tobaccoBar').style.width = `${scores.tobacco}%`;
+
+      ['date','ldl','hdl','tg','apob','lpa','crp','vo2','hrv','rhr','sleep'].forEach(key => {
+        const el = document.getElementById(`${key}Input`);
+        if (el) el.value = current[key] ?? '';
+      });
       document.getElementById('iqosInput').value = iqosToday;
-      renderHistoryTable(history); renderScoreLine(history); renderEncouragement(scores, previousScores, current, previous, iqosToday); updateIQOSWidget(iqosToday, scores);
+
+      renderHistoryTable(history);
+      renderScoreLine(history);
+      renderEncouragement(scores, previousScores, iqosToday);
+      updateIQOSWidget(iqosToday, scores);
+      updateTodaySummary(scores, iqosToday);
     }
 
-    function buildEntryFromInputs(){
+    function buildEntryFromInputs() {
       return {
         date: document.getElementById('dateInput').value || 'nouvelle entrée',
         total: null,
@@ -399,20 +1082,24 @@
       };
     }
 
-    function extractLabValue(text, pattern){ const m = text.match(pattern); return m ? parseFloat(m[1].replace(',', '.')) : null; }
-    function parseLabText(raw){
-      const text = raw.replace(/\s+/g,' ').replace(/O,/g,'0,').replace(/O\./g,'0.');
+    function extractLabValue(text, pattern) {
+      const m = text.match(pattern);
+      return m ? parseFloat(m[1].replace(',', '.')) : null;
+    }
+
+    function parseLabText(raw) {
+      const text = raw.replace(/\s+/g, ' ').replace(/O,/g, '0,').replace(/O\./g, '0.');
       return {
         total: extractLabValue(text, /cholesterol total[^\d]{0,30}(\d+[\.,]\d+)/i),
         hdl: extractLabValue(text, /cholesterol hdl[^\d]{0,30}(\d+[\.,]\d+)/i),
         ldl: extractLabValue(text, /cholesterol ldl[^\d]{0,30}(\d+[\.,]\d+)/i),
         tg: extractLabValue(text, /triglycerides[^\d]{0,30}(\d+[\.,]\d+)/i),
-        crp: extractLabValue(text, /proteine c reactive|protein?e c-reactive|crp[^\d]{0,25}(\d+[\.,]\d+)/i) || extractLabValue(text, /crp[^\d]{0,25}(\d+[\.,]\d+)/i),
+        crp: extractLabValue(text, /crp[^\d]{0,25}(\d+[\.,]\d+)/i),
         creatinine: extractLabValue(text, /creatininemie[^\d]{0,30}(\d+[\.,]\d+)/i),
-        egfr: extractLabValue(text, /d\.f\.g\.|debit de filtration glomerulaire[^\d]{0,30}(\d+[\.,]?\d*)/i),
-        ast: extractLabValue(text, /sgot|asat[^\d]{0,20}(\d+[\.,]?\d*)/i),
-        alt: extractLabValue(text, /sgpt|alat[^\d]{0,20}(\d+[\.,]?\d*)/i),
-        ggt: extractLabValue(text, /g\.g\.t\.|g-glutamyl-transferase[^\d]{0,20}(\d+[\.,]?\d*)/i),
+        egfr: extractLabValue(text, /(?:d\.f\.g\.|debit de filtration glomerulaire)[^\d]{0,30}(\d+[\.,]?\d*)/i),
+        ast: extractLabValue(text, /(?:sgot|asat)[^\d]{0,20}(\d+[\.,]?\d*)/i),
+        alt: extractLabValue(text, /(?:sgpt|alat)[^\d]{0,20}(\d+[\.,]?\d*)/i),
+        ggt: extractLabValue(text, /(?:g\.g\.t\.|g-glutamyl-transferase)[^\d]{0,20}(\d+[\.,]?\d*)/i),
         psa: extractLabValue(text, /psa[^\d]{0,20}(\d+[\.,]\d+)/i),
         d_dimeres: extractLabValue(text, /d-dimeres[^\d]{0,20}(\d+[\.,]\d+)/i),
         platelets: extractLabValue(text, /plaquettes[^\d]{0,20}(\d+[\.,]?\d*)/i),
@@ -421,14 +1108,14 @@
       };
     }
 
-    function applyImportedLab(parsed){
+    function applyImportedLab(parsed) {
       const state = loadState();
       const current = { ...state.current };
-      if(parsed.ldl != null) current.ldl = parsed.ldl;
-      if(parsed.hdl != null) current.hdl = parsed.hdl;
-      if(parsed.tg != null) current.tg = parsed.tg;
-      if(parsed.crp != null) current.crp = parsed.crp;
-      if(parsed.total != null) current.total = parsed.total;
+      if (parsed.ldl != null) current.ldl = parsed.ldl;
+      if (parsed.hdl != null) current.hdl = parsed.hdl;
+      if (parsed.tg != null) current.tg = parsed.tg;
+      if (parsed.crp != null) current.crp = parsed.crp;
+      if (parsed.total != null) current.total = parsed.total;
       current.date = current.date || 'import labo';
       state.current = current;
       saveState(state);
@@ -441,7 +1128,7 @@
       state.iqosToday = entry.iqos ?? state.iqosToday ?? 10;
       entry.score = computeScores(entry, state.iqosToday).global;
       state.current = { ...entry };
-      state.history = [...(state.history||[]).filter(h => h.date !== entry.date), entry];
+      state.history = [...(state.history || []).filter(h => h.date !== entry.date), entry];
       saveState(state);
       updateUI();
     });
@@ -451,59 +1138,123 @@
       const entry = buildEntryFromInputs();
       const simIqos = entry.iqos ?? state.iqosToday ?? 10;
       const result = computeScores(entry, simIqos);
-      document.getElementById('aiAnalysisBox').textContent = `Simulation locale : score global ${result.global}, longévité ${result.longevity}, âge biologique ${result.bioAge.toFixed(1).replace('.', ',')}, athéro-score ${result.lipid}, tabac ${result.tobacco}.`;
+      document.getElementById('aiAnalysisBox').textContent =
+        `Simulation locale : score global ${result.global}, longévité ${result.longevity}, âge biologique ${result.bioAge.toFixed(1).replace('.', ',')}, athéro-score ${result.lipid}, tabac ${result.tobacco}.`;
     });
 
-    document.getElementById('resetBtn').addEventListener('click', () => { saveState(defaultState); updateUI(); });
-    document.getElementById('iqosPlusBtn').addEventListener('click', () => { const state=loadState(); state.iqosToday=(state.iqosToday??0)+1; saveState(state); updateUI(); });
-    document.getElementById('iqosMinusBtn').addEventListener('click', () => { const state=loadState(); state.iqosToday=Math.max(0,(state.iqosToday??0)-1); saveState(state); updateUI(); });
-    document.getElementById('iqosResetBtn').addEventListener('click', () => { const state=loadState(); state.iqosToday=0; saveState(state); updateUI(); });
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      saveState(defaultState);
+      updateUI();
+    });
+
+    document.getElementById('iqosPlusBtn').addEventListener('click', () => {
+      const state = loadState();
+      state.iqosToday = (state.iqosToday ?? 0) + 1;
+      saveState(state);
+      updateUI();
+    });
+
+    document.getElementById('iqosMinusBtn').addEventListener('click', () => {
+      const state = loadState();
+      state.iqosToday = Math.max(0, (state.iqosToday ?? 0) - 1);
+      saveState(state);
+      updateUI();
+    });
+
+    document.getElementById('iqosResetBtn').addEventListener('click', () => {
+      const state = loadState();
+      state.iqosToday = 0;
+      saveState(state);
+      updateUI();
+    });
 
     document.getElementById('exportJsonBtn').addEventListener('click', () => {
       const state = loadState();
-      const blob = new Blob([JSON.stringify(state,null,2)], { type:'application/json' });
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'health-cockpit-v10-2.json'; a.click(); URL.revokeObjectURL(url);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'health-cockpit-v11.json';
+      a.click();
+      URL.revokeObjectURL(url);
     });
 
     document.getElementById('restoreJsonBtn').addEventListener('click', async () => {
-      const file = document.getElementById('restoreJsonInput').files[0]; if(!file) return;
-      const text = await file.text(); saveState(JSON.parse(text)); updateUI();
+      const file = document.getElementById('restoreJsonInput').files[0];
+      if (!file) return;
+      const text = await file.text();
+      saveState(JSON.parse(text));
+      updateUI();
     });
 
     document.getElementById('importHealthBtn').addEventListener('click', async () => {
-      const file = document.getElementById('healthFileInput').files[0]; if(!file) return;
+      const file = document.getElementById('healthFileInput').files[0];
+      if (!file) return;
+
       const text = await file.text();
-      try{
-        const payload = JSON.parse(text); const state = loadState(); state.current = { ...state.current, ...payload }; if(payload.iqos != null) state.iqosToday = payload.iqos; saveState(state); updateUI();
+      try {
+        const payload = JSON.parse(text);
+        const state = loadState();
+        state.current = { ...state.current, ...payload };
+        if (payload.iqos != null) state.iqosToday = payload.iqos;
+        saveState(state);
+        updateUI();
         document.getElementById('aiAnalysisBox').textContent = 'Import santé effectué. Les scores ont été recalculés.';
-      }catch{ document.getElementById('aiAnalysisBox').textContent = 'Import Apple Health : JSON attendu pour cette version.'; }
+      } catch {
+        document.getElementById('aiAnalysisBox').textContent = 'Import Apple Health : JSON attendu pour cette version.';
+      }
     });
 
     document.getElementById('scanLabBtn').addEventListener('click', async () => {
       const file = document.getElementById('labPhotoInput').files[0];
-      if(!file){ document.getElementById('ocrStatus').textContent = 'Statut OCR : choisis une image.'; return; }
+      if (!file) {
+        document.getElementById('ocrStatus').textContent = 'Statut OCR : choisis une image.';
+        return;
+      }
+
       document.getElementById('ocrStatus').textContent = 'Statut OCR : lecture de l image...';
-      try{
+
+      try {
         const result = await Tesseract.recognize(file, 'fra+eng', {
-          logger: m => { if(m.status === 'recognizing text') document.getElementById('ocrStatus').textContent = `Statut OCR : reconnaissance ${Math.round((m.progress||0)*100)} %`; }
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              document.getElementById('ocrStatus').textContent =
+                `Statut OCR : reconnaissance ${Math.round((m.progress || 0) * 100)} %`;
+            }
+          }
         });
+
         const parsed = parseLabText(result.data.text || '');
         applyImportedLab(parsed);
+
         const summary = [];
-        if(parsed.total != null) summary.push(`total ${parsed.total}`);
-        if(parsed.ldl != null) summary.push(`LDL ${parsed.ldl}`);
-        if(parsed.hdl != null) summary.push(`HDL ${parsed.hdl}`);
-        if(parsed.tg != null) summary.push(`TG ${parsed.tg}`);
-        if(parsed.crp != null) summary.push(`CRP ${parsed.crp}`);
-        document.getElementById('ocrStatus').textContent = summary.length ? `Statut OCR : importé -> ${summary.join(' • ')}` : 'Statut OCR : texte lu mais peu de valeurs reconnues. Essaie une photo plus nette.';
-      }catch(err){
+        if (parsed.total != null) summary.push(`total ${parsed.total}`);
+        if (parsed.ldl != null) summary.push(`LDL ${parsed.ldl}`);
+        if (parsed.hdl != null) summary.push(`HDL ${parsed.hdl}`);
+        if (parsed.tg != null) summary.push(`TG ${parsed.tg}`);
+        if (parsed.crp != null) summary.push(`CRP ${parsed.crp}`);
+
+        document.getElementById('ocrStatus').textContent = summary.length
+          ? `Statut OCR : importé -> ${summary.join(' • ')}`
+          : 'Statut OCR : texte lu mais peu de valeurs reconnues. Essaie une photo plus nette.';
+      } catch {
         document.getElementById('ocrStatus').textContent = 'Statut OCR : échec de lecture. Essaie une photo plus nette et bien cadrée.';
       }
     });
 
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.screen;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+        document.getElementById(`screen-${target}`).classList.add('active');
+        document.getElementById('topbarBadge').textContent = btn.textContent;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
     updateUI();
   </script>
-
 </body>
 </html>
